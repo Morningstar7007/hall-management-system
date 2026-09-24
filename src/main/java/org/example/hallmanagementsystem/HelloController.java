@@ -4,11 +4,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class HelloController {
-    @FXML
-    private Label welcomeText;
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to your Hall Management System!");
+    private Label statusLabel;
+
+    @FXML
+    protected void onManageStudentsClick() {
+        statusLabel.setText("System Status: Loading Student Data...");
+        System.out.println("Navigating to Student Management...");
+        // In the future, this will open the Student screen
+    }
+
+    @FXML
+    protected void onManageRoomsClick() {
+        statusLabel.setText("System Status: Loading Room Data...");
+        System.out.println("Navigating to Room Management...");
+        // In the future, this will open the Room screen
     }
 }
