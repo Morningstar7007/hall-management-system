@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.LoginController">
+
+    <VBox alignment="CENTER" maxWidth="350.0" spacing="15.0" style="-fx-background-color: linear-gradient(to bottom, #d4c497, #fdfaf0); -fx-border-color: #616161; -fx-border-radius: 10; -fx-background-radius: 10;">
+        <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+        </padding>
+
+        <Label text="Lalanshah Hall Login">
+            <font>
+                <Font name="System Bold" size="16.0" />
+            </font>
+            <VBox.margin>
+                <Insets bottom="10.0" />
+            </VBox.margin>
+        </Label>
+
+        <VBox spacing="5.0">
+            <Label text="Login Id :" />
+            <TextField fx:id="loginIdField" />
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label text="Password :" />
+            <PasswordField fx:id="passwordField" />
+        </VBox>
+
+        <Label fx:id="errorLabel" textFill="#d32f2f" />
+
+        <Button onAction="#onLoginClick" prefWidth="80.0" text="Login" />
+    </VBox>
+</VBox>
