@@ -3,6 +3,7 @@ package org.example.hallmanagementsystem;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,6 +24,9 @@ public class HelloController {
 
     @FXML
     private Label apiDataLabel;
+
+    @FXML
+    private StackPane contentArea;
 
     @FXML
     public void initialize() {
@@ -48,13 +52,23 @@ public class HelloController {
     }
 
     @FXML
-    protected void onManageStudentsClick() {
-        statusLabel.setText("System Status: Loading Student Data...");
+    protected void onProfileClick() {
+        statusLabel.setText("Loading Profile View...");
     }
 
     @FXML
-    protected void onManageRoomsClick() {
-        statusLabel.setText("System Status: Loading Room Data...");
+    protected void onMealClick() {
+        statusLabel.setText("Loading Meal Management View...");
+    }
+
+    @FXML
+    protected void onPaymentClick() {
+        statusLabel.setText("Loading Payment Details View...");
+    }
+
+    @FXML
+    protected void onSettingsClick() {
+        statusLabel.setText("Loading Settings View...");
     }
 
     // Week 7: JSON Parsing and API Response using Jackson
@@ -68,11 +82,10 @@ public class HelloController {
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                // Parse the JSON response using Jackson's ObjectMapper
+                // Parse the JSON response using Jackson
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode rootNode = mapper.readTree(response.body());
 
-                // Navigate the JSON tree: {"slip": { "advice": "..."}}
                 String tip = rootNode.path("slip").path("advice").asText();
 
                 // Update UI safely
