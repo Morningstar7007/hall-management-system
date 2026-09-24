@@ -19,5 +19,11 @@
     <Button text="Manage Students" onAction="#onManageStudentsClick" prefWidth="200.0" prefHeight="40.0"/>
     <Button text="Manage Rooms" onAction="#onManageRoomsClick" prefWidth="200.0" prefHeight="40.0"/>
 
+    <Label fx:id="timeLabel" text="Current Time: --:--:--" textFill="#2196f3">
+        <font>
+            <Font name="System Bold" size="14.0"/>
+        </font>
+    </Label>
+
     <Label fx:id="statusLabel" text="System Status: Ready" textFill="gray"/>
 </VBox>
