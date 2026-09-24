@@ -51,9 +51,21 @@ public class HelloController {
         fetchDailyTip();
     }
 
+    private void loadView(String fxmlFileName) {
+        try {
+            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(HelloApplication.class.getResource(fxmlFileName));
+            javafx.scene.Node view = fxmlLoader.load();
+            contentArea.getChildren().setAll(view);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Error loading view.");
+        }
+    }
+
     @FXML
     protected void onProfileClick() {
-        statusLabel.setText("Loading Profile View...");
+        statusLabel.setText("Viewing Profile");
+        loadView("profile-view.fxml");
     }
 
     @FXML
