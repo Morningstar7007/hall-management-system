@@ -3,7 +3,13 @@ package org.example.hallmanagementsystem;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,36 +22,29 @@ public class HelloController {
     private Label timeLabel;
 
     @FXML
+    private Label apiDataLabel;
+
+    @FXML
     public void initialize() {
-        // Week 4: Multithreading and Concurrency
-        // Create a background task using Runnable
-        Runnable clockTask = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        // 1. Get the exact current time
-                        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
-                        String currentTime = formatter.format(new Date());
-
-                        // 2. Update the JavaFX UI safely using Platform.runLater
-                        Platform.runLater(() -> timeLabel.setText("Time: " + currentTime));
-
-                        // 3. Put this background thread to sleep for 1 second
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        System.out.println("Clock thread interrupted");
-                        break;
-                    }
+        // Week 4: Multithreading (Clock)
+        Runnable clockTask = () -> {
+            while (true) {
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
+                    String currentTime = formatter.format(new Date());
+                    Platform.runLater(() -> timeLabel.setText("Time: " + currentTime));
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    break;
                 }
             }
         };
-
-        // Start the background thread
         Thread clockThread = new Thread(clockTask);
-        // setDaemon(true) ensures this background thread stops when you close the app window
         clockThread.setDaemon(true);
         clockThread.start();
+
+        // Week 7: Trigger API fetch in the background
+        fetchDailyTip();
     }
 
     @FXML
@@ -56,5 +55,32 @@ public class HelloController {
     @FXML
     protected void onManageRoomsClick() {
         statusLabel.setText("System Status: Loading Room Data...");
+    }
+
+    // Week 7: JSON Parsing and API Response using Jackson
+    private void fetchDailyTip() {
+        new Thread(() -> {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("https://api.adviceslip.com/advice"))
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                // Parse the JSON response using Jackson's ObjectMapper
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(response.body());
+
+                // Navigate the JSON tree: {"slip": { "advice": "..."}}
+                String tip = rootNode.path("slip").path("advice").asText();
+
+                // Update UI safely
+                Platform.runLater(() -> apiDataLabel.setText("Manager Tip: " + tip));
+
+            } catch (Exception e) {
+                Platform.runLater(() -> apiDataLabel.setText("Manager Tip: Could not load data."));
+            }
+        }).start();
     }
 }

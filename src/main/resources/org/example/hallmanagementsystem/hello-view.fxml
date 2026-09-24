@@ -18,6 +18,11 @@
 
     <Button text="Manage Students" onAction="#onManageStudentsClick" prefWidth="200.0" prefHeight="40.0"/>
     <Button text="Manage Rooms" onAction="#onManageRoomsClick" prefWidth="200.0" prefHeight="40.0"/>
+    <Label fx:id="apiDataLabel" text="Loading daily tip..." textFill="#4caf50" wrapText="true" textAlignment="CENTER">
+        <font>
+            <Font name="System Italic" size="13.0"/>
+        </font>
+    </Label>
 
     <Label fx:id="timeLabel" text="Current Time: --:--:--" textFill="#2196f3">
         <font>
