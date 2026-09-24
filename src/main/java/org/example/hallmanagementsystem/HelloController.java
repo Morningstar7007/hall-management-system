@@ -70,7 +70,8 @@ public class HelloController {
 
     @FXML
     protected void onMealClick() {
-        statusLabel.setText("Loading Meal Management View...");
+        statusLabel.setText("Viewing Meal Management");
+        loadView("meal-view.fxml");
     }
 
     @FXML
