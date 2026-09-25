@@ -35,7 +35,7 @@ public class ManageStudentsController {
     @FXML private TableView<StudentProfile> studentsTable;
     @FXML private TableColumn<StudentProfile, String> colId, colName, colRoom, colMobile, colDept, colBoarderNo, colBoarderType;
 
-    private byte[] currentPhotoBytes = null; // Holds the binary data for the image
+    private byte[] currentPhotoBytes = null;
 
     @FXML
     public void initialize() {
@@ -55,18 +55,14 @@ public class ManageStudentsController {
         studentsTable.setRowFactory(tv -> {
             TableRow<StudentProfile> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                // Handle Single Click
                 if (event.getClickCount() == 1) {
                     if (!row.isEmpty()) {
-                        // Clicked a row with a student: Fill the form
                         populateForm(row.getItem());
                     } else {
-                        // Clicked an empty row: Clear the form for new data entry
                         clearForm();
                         studentsTable.getSelectionModel().clearSelection();
                     }
                 }
-                // Handle Double Click
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     showFullProfileDialog(row.getItem());
                 }
@@ -94,7 +90,7 @@ public class ManageStudentsController {
             try {
                 currentPhotoBytes = Files.readAllBytes(selectedFile.toPath());
                 photoPreview.setImage(new Image(new ByteArrayInputStream(currentPhotoBytes)));
-                formStatusLabel.setText(""); // Clear any previous errors
+                formStatusLabel.setText("");
             } catch (IOException e) {
                 formStatusLabel.setText("Error loading image file.");
             }
@@ -110,12 +106,10 @@ public class ManageStudentsController {
         VBox dialogLayout = new VBox(15);
         dialogLayout.setPadding(new Insets(20));
 
-        // Add Image to the top of the popup
         ImageView popupPhoto = new ImageView();
         popupPhoto.setFitWidth(120);
         popupPhoto.setFitHeight(150);
-        popupPhoto.setPreserveRatio(true); // Strictly prevents stretching/squishing
-
+        popupPhoto.setPreserveRatio(true);
         if (p.getPhoto() != null) {
             popupPhoto.setImage(new Image(new ByteArrayInputStream(p.getPhoto())));
         }
@@ -197,13 +191,29 @@ public class ManageStudentsController {
         return combo.getValue() == null ? "" : combo.getValue().trim();
     }
 
+    /**
+     * Helper method to bypass the JavaFX ComboBox rendering bug.
+     * Re-injecting the items array forces the UI to properly redraw the prompt text.
+     */
+    private void resetDropdown(ComboBox<String> combo, String... items) {
+        combo.getSelectionModel().clearSelection();
+        combo.setValue(null);
+        combo.setItems(FXCollections.observableArrayList(items));
+    }
+
     private void clearForm() {
         fId.clear(); fName.clear(); fFather.clear(); fMother.clear(); fDistrict.clear(); fAddress.clear();
         fReligion.clear(); fPhone.clear(); fMobile.clear(); fEmail.clear(); fRoom.clear(); fBoarderNo.clear(); fBoarderType.clear();
-        fDept.setValue(null); fDegree.setValue(null); fGender.setValue(null); fBlock.setValue(null);
+
+        // Use the helper method to cleanly reset dropdowns and force prompt text
+        resetDropdown(fDept, "CSE", "EEE", "ME", "CE", "URP", "Arch", "BECM", "LE", "ECE", "BME", "MSE", "IEM");
+        resetDropdown(fDegree, "B.Sc. (Undergraduate)", "M.Sc. (Postgraduate)", "Ph.D.");
+        resetDropdown(fGender, "Male", "Female", "Other");
+        resetDropdown(fBlock, "A", "B", "C", "D");
 
         currentPhotoBytes = null;
         photoPreview.setImage(null);
+        formStatusLabel.setText("");
     }
 
     @FXML
@@ -244,7 +254,7 @@ public class ManageStudentsController {
                     pstmt.setString(12, fMobile.getText().trim()); pstmt.setString(13, fEmail.getText().trim());
                     pstmt.setString(14, fRoom.getText().trim()); pstmt.setString(15, getComboValue(fBlock));
                     pstmt.setString(16, fBoarderNo.getText().trim()); pstmt.setString(17, fBoarderType.getText().trim());
-                    pstmt.setBytes(18, currentPhotoBytes); // Insert BLOB image
+                    pstmt.setBytes(18, currentPhotoBytes);
                     pstmt.executeUpdate();
                 }
 
@@ -291,7 +301,6 @@ public class ManageStudentsController {
                     String boarderNo = resolveValue(fBoarderNo.getText(), rs.getString("boarderNo"));
                     String boarderType = resolveValue(fBoarderType.getText(), rs.getString("boarderType"));
 
-                    // Keep existing photo if a new one wasn't selected during update
                     byte[] photoToSave = currentPhotoBytes != null ? currentPhotoBytes : rs.getBytes("photo");
 
                     String updateQuery = "UPDATE Students SET fullName=?, fatherName=?, motherName=?, homeDistrict=?, address=?, department=?, degreeLevel=?, religion=?, gender=?, phoneNo=?, mobileNo=?, emailAddress=?, assignedRoomNumber=?, block=?, boarderNo=?, boarderType=?, photo=? WHERE studentId=?";
