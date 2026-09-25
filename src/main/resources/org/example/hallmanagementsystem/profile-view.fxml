@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="20.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.ProfileController">
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
@@ -38,16 +38,16 @@
             </columnConstraints>
 
             <Label text="Student Roll" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <Label text=": 2307099" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label fx:id="rollLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
             <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <Label text=": MONOJIT PAUL TANMAY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="nameLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <Label text="Department" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <Label text=": CSE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
             <Label text="Mobile No" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <Label text=": 01550086298" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="mobileLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
             <Label text="Email Address" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <Label text=": monojitpaul704@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="4" />
@@ -55,8 +55,8 @@
             <Label text="Block" GridPane.columnIndex="0" GridPane.rowIndex="5" />
             <Label text=": B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-            <Label text="Boarder No" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <Label text=": 1462" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Assigned Room" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Label fx:id="roomLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="6" />
         </GridPane>
     </HBox>
 </VBox>
