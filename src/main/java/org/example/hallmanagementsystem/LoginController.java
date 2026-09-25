@@ -23,33 +23,39 @@ public class LoginController {
 
     @FXML
     protected void onLoginClick() {
-        String id = loginIdField.getText();
+        String username = loginIdField.getText();
         String pass = passwordField.getText();
 
-        if (id.isEmpty() || pass.isEmpty()) {
+        if (username.isEmpty() || pass.isEmpty()) {
             errorLabel.setText("Please enter your credentials.");
             return;
         }
 
-        // Database Authentication
-        String query = "SELECT password FROM Students WHERE studentId = ?";
+        // Query the Users table for password and role
+        String query = "SELECT password, role FROM Users WHERE username = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            pstmt.setString(1, id);
+            pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 String dbPassword = rs.getString("password");
+                String role = rs.getString("role");
 
                 if (pass.equals(dbPassword)) {
-                    loadDashboard();
+                    // Smart Routing: Load different dashboards based on role
+                    if (role.equals("ADMIN")) {
+                        loadDashboard("admin-view.fxml");
+                    } else if (role.equals("STUDENT")) {
+                        loadDashboard("hello-view.fxml");
+                    }
                 } else {
                     errorLabel.setText("Invalid Password.");
                 }
             } else {
-                errorLabel.setText("Student ID not found.");
+                errorLabel.setText("User not found.");
             }
 
         } catch (SQLException e) {
@@ -58,10 +64,10 @@ public class LoginController {
         }
     }
 
-    private void loadDashboard() {
+    private void loadDashboard(String fxmlFile) {
         try {
             Stage stage = (Stage) loginIdField.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
             Scene scene = new Scene(fxmlLoader.load(), 900, 600);
             stage.setScene(scene);
         } catch (IOException e) {
