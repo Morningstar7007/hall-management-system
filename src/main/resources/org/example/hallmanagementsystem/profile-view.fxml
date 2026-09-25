@@ -7,56 +7,57 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.ProfileController">
-    <padding>
-        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
-    </padding>
-
+<VBox spacing="10.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.ProfileController">
+    <padding><Insets bottom="20.0" left="40.0" right="40.0" top="20.0" /></padding>
     <VBox alignment="CENTER">
         <Label text="My Profile" textFill="#039BE5">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-            <VBox.margin>
-                <Insets bottom="15.0" />
-            </VBox.margin>
+            <font><Font name="System Bold" size="18.0" /></font>
         </Label>
     </VBox>
-
-    <HBox spacing="40.0" style="-fx-border-color: #039BE5; -fx-border-width: 1; -fx-padding: 30;">
-
-        <!-- Placeholder for Photo -->
-        <VBox alignment="CENTER" prefHeight="150.0" prefWidth="130.0" style="-fx-border-color: #E0E0E0; -fx-background-color: #FAFAFA;">
+    <HBox spacing="40.0" style="-fx-border-color: #039BE5; -fx-border-width: 1; -fx-padding: 20;">
+        <VBox alignment="TOP_CENTER" prefHeight="150.0" prefWidth="130.0" style="-fx-border-color: #E0E0E0; -fx-background-color: #FAFAFA;">
             <Label text="Student Photo" textFill="#9E9E9E" />
         </VBox>
-
-        <!-- Profile Details -->
-        <GridPane hgap="20.0" vgap="12.0">
+        <GridPane hgap="20.0" vgap="8.0">
             <columnConstraints>
                 <ColumnConstraints minWidth="130.0" />
                 <ColumnConstraints minWidth="250.0" />
             </columnConstraints>
-
+            <!-- 17 Fields -->
             <Label text="Student Roll" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <Label fx:id="rollLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
+            <Label fx:id="rollLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <Label fx:id="nameLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-            <Label text="Department" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <Label text=": CSE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-            <Label text="Mobile No" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <Label fx:id="mobileLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-            <Label text="Email Address" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <Label text=": monojitpaul704@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-            <Label text="Block" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-            <Label text=": B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-            <Label text="Assigned Room" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <Label fx:id="roomLabel" text=": Loading..." GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label fx:id="nameLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Father Name" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label fx:id="fatherNameLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Mother Name" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Label fx:id="motherNameLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Home District" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Label fx:id="homeDistrictLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Address" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <Label fx:id="addressLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Department" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Label fx:id="departmentLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Degree Level" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+            <Label fx:id="degreeLevelLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="Religion" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+            <Label fx:id="religionLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label text="Gender" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+            <Label fx:id="genderLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label text="Phone No" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+            <Label fx:id="phoneLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Label text="Mobile No" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+            <Label fx:id="mobileLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Label text="Email Address" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+            <Label fx:id="emailLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <Label text="Room No" GridPane.columnIndex="0" GridPane.rowIndex="13" />
+            <Label fx:id="roomLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <Label text="Block" GridPane.columnIndex="0" GridPane.rowIndex="14" />
+            <Label fx:id="blockLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <Label text="Boarder No" GridPane.columnIndex="0" GridPane.rowIndex="15" />
+            <Label fx:id="boarderNoLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <Label text="Boarder Type" GridPane.columnIndex="0" GridPane.rowIndex="16" />
+            <Label fx:id="boarderTypeLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="16" />
         </GridPane>
     </HBox>
 </VBox>

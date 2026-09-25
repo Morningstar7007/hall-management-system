@@ -7,14 +7,12 @@ import java.sql.Statement;
 public class DatabaseInitializer {
 
     public static void createTables() {
-        // 1. Users Table (Handles all logins)
         String createUsersTable = "CREATE TABLE IF NOT EXISTS Users ("
                 + "username TEXT PRIMARY KEY,"
                 + "password TEXT NOT NULL,"
-                + "role TEXT NOT NULL" // Will be either 'ADMIN' or 'STUDENT'
+                + "role TEXT NOT NULL"
                 + ");";
 
-        // 2. Rooms Table
         String createRoomsTable = "CREATE TABLE IF NOT EXISTS Rooms ("
                 + "roomNumber TEXT PRIMARY KEY,"
                 + "capacity INTEGER NOT NULL,"
@@ -22,13 +20,24 @@ public class DatabaseInitializer {
                 + "hasAirConditioning BOOLEAN NOT NULL"
                 + ");";
 
-        // 3. Students Table (Profile data only, no password here)
         String createStudentsTable = "CREATE TABLE IF NOT EXISTS Students ("
                 + "studentId TEXT PRIMARY KEY,"
                 + "fullName TEXT NOT NULL,"
+                + "fatherName TEXT,"
+                + "motherName TEXT,"
+                + "homeDistrict TEXT,"
+                + "address TEXT,"
+                + "department TEXT,"
+                + "degreeLevel TEXT,"
+                + "religion TEXT,"
+                + "gender TEXT,"
+                + "phoneNo TEXT,"
+                + "mobileNo TEXT,"
+                + "emailAddress TEXT,"
                 + "assignedRoomNumber TEXT,"
-                + "contactNumber TEXT,"
-                + "feePaid BOOLEAN NOT NULL,"
+                + "block TEXT,"
+                + "boarderNo TEXT,"
+                + "boarderType TEXT,"
                 + "FOREIGN KEY (studentId) REFERENCES Users(username),"
                 + "FOREIGN KEY (assignedRoomNumber) REFERENCES Rooms(roomNumber)"
                 + ");";
@@ -58,33 +67,26 @@ public class DatabaseInitializer {
             stmt.execute(createStudentsTable);
             stmt.execute(createMealsTable);
             stmt.execute(createPaymentsTable);
-            System.out.println("Role-based database tables created successfully.");
 
             insertTestData(conn);
-
         } catch (SQLException e) {
             System.out.println("Error creating tables: " + e.getMessage());
         }
     }
 
     private static void insertTestData(Connection conn) {
-        // Seed 1: The Master Admin Account
         String insertAdminUser = "INSERT OR IGNORE INTO Users (username, password, role) VALUES ('admin', 'admin123', 'ADMIN')";
-
-        // Seed 2: The Student Account & Profile
         String insertStudentUser = "INSERT OR IGNORE INTO Users (username, password, role) VALUES ('2307099', '123456', 'STUDENT')";
         String insertRoom = "INSERT OR IGNORE INTO Rooms (roomNumber, capacity, currentOccupancy, hasAirConditioning) VALUES ('B-1462', 2, 1, false)";
-        String insertStudentProfile = "INSERT OR IGNORE INTO Students (studentId, fullName, assignedRoomNumber, contactNumber, feePaid) VALUES ('2307099', 'MONOJIT PAUL TANMAY', 'B-1462', '01550086298', true)";
 
-        String insertPayment1 = "INSERT OR IGNORE INTO Payments (sl, studentId, fromYear, fromMonth, toYear, toMonth, messing, monthlyFeast, fine, generator, waterSupply, miscellaneous) "
-                + "VALUES (1, '2307099', '2026', '9', '2026', '9', 1950.00, 70.00, 0.00, 5.00, 10.00, 0.00)";
+        String insertStudentProfile = "INSERT OR IGNORE INTO Students (studentId, fullName, fatherName, motherName, homeDistrict, address, department, degreeLevel, religion, gender, phoneNo, mobileNo, emailAddress, assignedRoomNumber, block, boarderNo, boarderType) "
+                + "VALUES ('2307099', 'MONOJIT PAUL TANMAY', 'John Doe', 'Jane Doe', 'Dhaka', '123 Main St', 'CSE', 'Undergraduate', 'Hinduism', 'Male', 'N/A', '01550086298', 'monojitpaul704@gmail.com', 'B-1462', 'B', '101', 'Resident')";
 
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(insertAdminUser);
             stmt.execute(insertStudentUser);
             stmt.execute(insertRoom);
             stmt.execute(insertStudentProfile);
-            stmt.execute(insertPayment1);
         } catch (SQLException e) {
             System.out.println("Error inserting test data: " + e.getMessage());
         }
