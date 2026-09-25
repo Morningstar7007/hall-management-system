@@ -81,7 +81,8 @@ public class HelloController {
     }
     @FXML
     protected void onSettingsClick() {
-        statusLabel.setText("Loading Settings View...");
+        statusLabel.setText("Viewing Password Settings");
+        loadView("settings-view.fxml");
     }
 
     // Week 7: JSON Parsing and API Response using Jackson
