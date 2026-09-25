@@ -76,9 +76,9 @@ public class HelloController {
 
     @FXML
     protected void onPaymentClick() {
-        statusLabel.setText("Loading Payment Details View...");
+        statusLabel.setText("Viewing Payment Details");
+        loadView("payment-view.fxml");
     }
-
     @FXML
     protected void onSettingsClick() {
         statusLabel.setText("Loading Settings View...");
