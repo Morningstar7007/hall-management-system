@@ -14,16 +14,17 @@ public class DatabaseInitializer {
                 + "hasAirConditioning BOOLEAN NOT NULL"
                 + ");";
 
+        // NEW: Added password column
         String createStudentsTable = "CREATE TABLE IF NOT EXISTS Students ("
                 + "studentId TEXT PRIMARY KEY,"
                 + "fullName TEXT NOT NULL,"
+                + "password TEXT NOT NULL,"
                 + "assignedRoomNumber TEXT,"
                 + "contactNumber TEXT,"
                 + "feePaid BOOLEAN NOT NULL,"
                 + "FOREIGN KEY (assignedRoomNumber) REFERENCES Rooms(roomNumber)"
                 + ");";
 
-        // NEW: Table to track meal on/off status
         String createMealsTable = "CREATE TABLE IF NOT EXISTS MealRecords ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "studentId TEXT NOT NULL,"
@@ -38,7 +39,7 @@ public class DatabaseInitializer {
 
             stmt.execute(createRoomsTable);
             stmt.execute(createStudentsTable);
-            stmt.execute(createMealsTable); // Execute the new table
+            stmt.execute(createMealsTable);
             System.out.println("Database tables checked/created successfully.");
 
             insertTestData(conn);
@@ -50,7 +51,9 @@ public class DatabaseInitializer {
 
     private static void insertTestData(Connection conn) {
         String insertRoom = "INSERT OR IGNORE INTO Rooms (roomNumber, capacity, currentOccupancy, hasAirConditioning) VALUES ('B-1462', 2, 1, false)";
-        String insertStudent = "INSERT OR IGNORE INTO Students (studentId, fullName, assignedRoomNumber, contactNumber, feePaid) VALUES ('2307099', 'MONOJIT PAUL TANMAY', 'B-1462', '01550086298', true)";
+
+        // NEW: Added the default '123456' password to the test data
+        String insertStudent = "INSERT OR IGNORE INTO Students (studentId, fullName, password, assignedRoomNumber, contactNumber, feePaid) VALUES ('2307099', 'MONOJIT PAUL TANMAY', '123456', 'B-1462', '01550086298', true)";
 
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(insertRoom);
