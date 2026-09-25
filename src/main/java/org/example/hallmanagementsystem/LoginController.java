@@ -45,6 +45,9 @@ public class LoginController {
                 String role = rs.getString("role");
 
                 if (pass.equals(dbPassword)) {
+                    // Save the user's ID to the global session
+                    UserSession.loggedInUsername = username;
+
                     // Smart Routing: Load different dashboards based on role
                     if (role.equals("ADMIN")) {
                         loadDashboard("admin-view.fxml");

@@ -19,8 +19,8 @@ public class ProfileController {
 
     @FXML
     public void initialize() {
-        // Fetch the data for the logged-in student (using the hardcoded ID for now)
-        fetchStudentData("2307099");
+        // Fetch data for the dynamically logged-in student
+        fetchStudentData(UserSession.loggedInUsername);
     }
 
     private void fetchStudentData(String studentId) {

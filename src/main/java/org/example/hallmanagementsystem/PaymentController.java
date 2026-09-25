@@ -45,8 +45,10 @@ public class PaymentController {
         waterSupplyCol.setCellValueFactory(new PropertyValueFactory<>("waterSupply"));
         miscellaneousCol.setCellValueFactory(new PropertyValueFactory<>("miscellaneous"));
 
-        // Fetch and load the data from SQLite
-        loadPaymentData("2307099");
+        // Fetch and load the data from SQLite dynamically using the session
+        if (UserSession.loggedInUsername != null) {
+            loadPaymentData(UserSession.loggedInUsername);
+        }
     }
 
     private void loadPaymentData(String studentId) {

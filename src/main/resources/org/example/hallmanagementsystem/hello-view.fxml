@@ -12,28 +12,21 @@
 
     <!-- TOP HEADER -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #0288D1;" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #039BE5;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
-            <Label text="Lalan Shah Hall Management System" textFill="WHITE">
+            <Label text="Hall Management System - STUDENT PORTAL" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="20.0" />
                 </font>
             </Label>
-            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                <Label fx:id="timeLabel" text="Time: --:--:--" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-            </HBox>
         </HBox>
     </top>
 
     <!-- LEFT SIDEBAR -->
     <left>
-        <VBox prefWidth="220.0" spacing="10.0" style="-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
+        <VBox prefWidth="230.0" spacing="10.0" style="-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
             </padding>
@@ -43,21 +36,19 @@
                     <Font name="System Bold" size="12.0" />
                 </font>
                 <VBox.margin>
-                    <Insets bottom="10.0" left="5.0" />
+                    <Insets bottom="10.0" />
                 </VBox.margin>
             </Label>
 
-            <Button maxWidth="Infinity" onAction="#onProfileClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #1976D2;" text="👤 My Profile" />
-            <Button maxWidth="Infinity" onAction="#onMealClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #1976D2;" text="🍽 Student Meal On/Off" />
-            <Button maxWidth="Infinity" onAction="#onPaymentClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #1976D2;" text="💰 Payment Details" />
-            <Button maxWidth="Infinity" onAction="#onSettingsClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #1976D2;" text="⚙ Change Password" />
-            <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
-                <Label fx:id="apiDataLabel" text="Daily Tip Loading..." textAlignment="CENTER" textFill="#9e9e9e" wrapText="true">
-                    <font>
-                        <Font name="System Italic" size="11.0" />
-                    </font>
-                </Label>
-            </VBox>
+            <Button maxWidth="Infinity" onAction="#onProfileClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #039BE5; -fx-font-size: 14px;" text="👤 My Profile" />
+            <Button maxWidth="Infinity" onAction="#onMealClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #039BE5; -fx-font-size: 14px;" text="🍽️ Student Meal On/Off" />
+            <Button maxWidth="Infinity" onAction="#onPaymentClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #039BE5; -fx-font-size: 14px;" text="💳 Payment Details" />
+            <Button maxWidth="Infinity" onAction="#onSettingsClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #039BE5; -fx-font-size: 14px;" text="⚙️ Change Password" />
+
+            <!-- This spacer dynamically expands to push the logout button to the very bottom -->
+            <VBox VBox.vgrow="ALWAYS" />
+
+            <Button maxWidth="Infinity" onAction="#onLogoutClick" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-text-fill: #D32F2F; -fx-font-weight: bold; -fx-font-size: 14px;" text="🚪 Logout" />
         </VBox>
     </left>
 
@@ -65,13 +56,18 @@
     <center>
         <StackPane fx:id="contentArea" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
             <VBox alignment="CENTER" spacing="20.0">
-                <Label text="Welcome to the Dashboard" textFill="#424242">
+                <Label text="Welcome to the Student Dashboard" textFill="#424242">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
                 </Label>
-                <Label fx:id="statusLabel" text="Select an option from the menu to get started." textFill="#757575" />
+                <Label fx:id="statusLabel" text="Select an option from the menu on the left." textFill="#757575">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
             </VBox>
         </StackPane>
     </center>
+
 </BorderPane>

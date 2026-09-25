@@ -32,7 +32,9 @@ public class MealController {
 
         RadioButton selectedRadio = (RadioButton) mealStatusGroup.getSelectedToggle();
         String status = selectedRadio.getText();
-        String studentId = "2307099"; // Hardcoded to match our seed data
+
+        // Dynamically get the logged-in student's ID
+        String studentId = UserSession.loggedInUsername;
 
         // Run database INSERT on a background thread
         new Thread(() -> {

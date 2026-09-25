@@ -24,7 +24,9 @@ public class SettingsController {
         String oldPass = oldPasswordField.getText();
         String newPass = newPasswordField.getText();
         String confirmPass = confirmPasswordField.getText();
-        String studentId = "2307099"; // Hardcoded for the current session
+
+        // Dynamically get the logged-in student's ID
+        String studentId = UserSession.loggedInUsername;
 
         if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
             showAlert("Error", "Please fill in all password fields.", Alert.AlertType.ERROR);
