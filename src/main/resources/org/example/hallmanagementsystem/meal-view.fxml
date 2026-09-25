@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="15.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="15.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.MealController">
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
@@ -41,10 +41,10 @@
 
         <HBox alignment="CENTER_LEFT" spacing="15.0">
             <Label text="From:" />
-            <DatePicker prefWidth="130.0" />
+            <DatePicker fx:id="fromDatePicker" prefWidth="130.0" />
 
             <Label text="to:" />
-            <DatePicker prefWidth="130.0" />
+            <DatePicker fx:id="toDatePicker" prefWidth="130.0" />
 
             <RadioButton selected="true" text="ON">
                 <toggleGroup>
@@ -53,7 +53,7 @@
             </RadioButton>
             <RadioButton text="OFF" toggleGroup="$mealStatusGroup" />
 
-            <Button text="Update" />
+            <Button onAction="#onUpdateClick" text="Update" />
         </HBox>
 
         <HBox spacing="15.0" style="-fx-padding: 10 0 0 0;">
