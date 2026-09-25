@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -9,21 +10,25 @@
 
 <VBox spacing="10.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.ProfileController">
     <padding><Insets bottom="20.0" left="40.0" right="40.0" top="20.0" /></padding>
+
     <VBox alignment="CENTER">
         <Label text="My Profile" textFill="#039BE5">
             <font><Font name="System Bold" size="18.0" /></font>
         </Label>
     </VBox>
+
     <HBox spacing="40.0" style="-fx-border-color: #039BE5; -fx-border-width: 1; -fx-padding: 20;">
-        <VBox alignment="TOP_CENTER" prefHeight="150.0" prefWidth="130.0" style="-fx-border-color: #E0E0E0; -fx-background-color: #FAFAFA;">
-            <Label text="Student Photo" textFill="#9E9E9E" />
+
+        <!-- PROFILE PHOTO CONTAINER -->
+        <VBox alignment="CENTER" prefHeight="150.0" prefWidth="130.0" style="-fx-border-color: #E0E0E0; -fx-background-color: #FAFAFA;">
+            <ImageView fx:id="profileImageView" fitHeight="150.0" fitWidth="120.0" preserveRatio="true" />
         </VBox>
+
         <GridPane hgap="20.0" vgap="8.0">
             <columnConstraints>
                 <ColumnConstraints minWidth="130.0" />
                 <ColumnConstraints minWidth="250.0" />
             </columnConstraints>
-            <!-- 17 Fields -->
             <Label text="Student Roll" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <Label fx:id="rollLabel" text=": " GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="1" />

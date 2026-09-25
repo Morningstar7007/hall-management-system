@@ -7,12 +7,20 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.example.hallmanagementsystem.database.DatabaseConnection;
 import org.example.hallmanagementsystem.models.StudentProfile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +31,11 @@ public class ManageStudentsController {
     @FXML private TextField fId, fName, fFather, fMother, fDistrict, fAddress, fReligion, fPhone, fMobile, fEmail, fRoom, fBoarderNo, fBoarderType;
     @FXML private ComboBox<String> fDept, fDegree, fGender, fBlock;
     @FXML private Label formStatusLabel;
+    @FXML private ImageView photoPreview;
     @FXML private TableView<StudentProfile> studentsTable;
     @FXML private TableColumn<StudentProfile, String> colId, colName, colRoom, colMobile, colDept, colBoarderNo, colBoarderType;
+
+    private byte[] currentPhotoBytes = null; // Holds the binary data for the image
 
     @FXML
     public void initialize() {
@@ -44,6 +55,18 @@ public class ManageStudentsController {
         studentsTable.setRowFactory(tv -> {
             TableRow<StudentProfile> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
+                // Handle Single Click
+                if (event.getClickCount() == 1) {
+                    if (!row.isEmpty()) {
+                        // Clicked a row with a student: Fill the form
+                        populateForm(row.getItem());
+                    } else {
+                        // Clicked an empty row: Clear the form for new data entry
+                        clearForm();
+                        studentsTable.getSelectionModel().clearSelection();
+                    }
+                }
+                // Handle Double Click
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     showFullProfileDialog(row.getItem());
                 }
@@ -54,16 +77,52 @@ public class ManageStudentsController {
         loadStudentData();
     }
 
+    @FXML
+    protected void onSelectPhotoClick() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Passport Photo");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        File selectedFile = fileChooser.showOpenDialog(photoPreview.getScene().getWindow());
+
+        if (selectedFile != null) {
+            // Enforce 7MB file size limit (7,340,032 bytes)
+            if (selectedFile.length() > 7340032) {
+                formStatusLabel.setText("Error: Photo size must be less than 7MB.");
+                return;
+            }
+
+            try {
+                currentPhotoBytes = Files.readAllBytes(selectedFile.toPath());
+                photoPreview.setImage(new Image(new ByteArrayInputStream(currentPhotoBytes)));
+                formStatusLabel.setText(""); // Clear any previous errors
+            } catch (IOException e) {
+                formStatusLabel.setText("Error loading image file.");
+            }
+        }
+    }
+
     private void showFullProfileDialog(StudentProfile p) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Student Profile Details");
         alert.setHeaderText(p.getFullName() + " (ID: " + p.getStudentId() + ")");
         alert.getDialogPane().setMinWidth(450);
 
+        VBox dialogLayout = new VBox(15);
+        dialogLayout.setPadding(new Insets(20));
+
+        // Add Image to the top of the popup
+        ImageView popupPhoto = new ImageView();
+        popupPhoto.setFitWidth(120);
+        popupPhoto.setFitHeight(150);
+        popupPhoto.setPreserveRatio(true); // Strictly prevents stretching/squishing
+
+        if (p.getPhoto() != null) {
+            popupPhoto.setImage(new Image(new ByteArrayInputStream(p.getPhoto())));
+        }
+
         GridPane grid = new GridPane();
         grid.setHgap(20);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 20, 10, 10));
 
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setMinWidth(120);
@@ -88,7 +147,8 @@ public class ManageStudentsController {
         grid.add(new Label("Boarder No:"), 0, 14); grid.add(new Label(p.getBoarderNo()), 1, 14);
         grid.add(new Label("Boarder Type:"), 0, 15); grid.add(new Label(p.getBoarderType()), 1, 15);
 
-        alert.getDialogPane().setContent(grid);
+        dialogLayout.getChildren().addAll(popupPhoto, grid);
+        alert.getDialogPane().setContent(dialogLayout);
         alert.showAndWait();
     }
 
@@ -107,12 +167,30 @@ public class ManageStudentsController {
                             rs.getString("department"), rs.getString("degreeLevel"), rs.getString("religion"),
                             rs.getString("gender"), rs.getString("phoneNo"), rs.getString("mobileNo"),
                             rs.getString("emailAddress"), rs.getString("assignedRoomNumber"), rs.getString("block"),
-                            rs.getString("boarderNo"), rs.getString("boarderType")
+                            rs.getString("boarderNo"), rs.getString("boarderType"), rs.getBytes("photo")
                     ));
                 }
                 Platform.runLater(() -> studentsTable.setItems(students));
             } catch (SQLException e) { e.printStackTrace(); }
         }).start();
+    }
+
+    private void populateForm(StudentProfile profile) {
+        fId.setText(profile.getStudentId()); fName.setText(profile.getFullName()); fFather.setText(profile.getFatherName());
+        fMother.setText(profile.getMotherName()); fDistrict.setText(profile.getHomeDistrict()); fAddress.setText(profile.getAddress());
+        fReligion.setText(profile.getReligion()); fPhone.setText(profile.getPhoneNo()); fMobile.setText(profile.getMobileNo());
+        fEmail.setText(profile.getEmailAddress()); fRoom.setText(profile.getAssignedRoomNumber());
+        fBoarderNo.setText(profile.getBoarderNo()); fBoarderType.setText(profile.getBoarderType());
+
+        fDept.setValue(profile.getDepartment()); fDegree.setValue(profile.getDegreeLevel());
+        fGender.setValue(profile.getGender()); fBlock.setValue(profile.getBlock());
+
+        currentPhotoBytes = profile.getPhoto();
+        if (currentPhotoBytes != null) {
+            photoPreview.setImage(new Image(new ByteArrayInputStream(currentPhotoBytes)));
+        } else {
+            photoPreview.setImage(null);
+        }
     }
 
     private String getComboValue(ComboBox<String> combo) {
@@ -123,6 +201,9 @@ public class ManageStudentsController {
         fId.clear(); fName.clear(); fFather.clear(); fMother.clear(); fDistrict.clear(); fAddress.clear();
         fReligion.clear(); fPhone.clear(); fMobile.clear(); fEmail.clear(); fRoom.clear(); fBoarderNo.clear(); fBoarderType.clear();
         fDept.setValue(null); fDegree.setValue(null); fGender.setValue(null); fBlock.setValue(null);
+
+        currentPhotoBytes = null;
+        photoPreview.setImage(null);
     }
 
     @FXML
@@ -153,7 +234,7 @@ public class ManageStudentsController {
                     pstmtUser.executeUpdate();
                 }
 
-                String insertQuery = "INSERT INTO Students (studentId, fullName, fatherName, motherName, homeDistrict, address, department, degreeLevel, religion, gender, phoneNo, mobileNo, emailAddress, assignedRoomNumber, block, boarderNo, boarderType) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                String insertQuery = "INSERT INTO Students (studentId, fullName, fatherName, motherName, homeDistrict, address, department, degreeLevel, religion, gender, phoneNo, mobileNo, emailAddress, assignedRoomNumber, block, boarderNo, boarderType, photo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
                     pstmt.setString(1, id); pstmt.setString(2, fName.getText().trim()); pstmt.setString(3, fFather.getText().trim());
                     pstmt.setString(4, fMother.getText().trim()); pstmt.setString(5, fDistrict.getText().trim());
@@ -163,6 +244,7 @@ public class ManageStudentsController {
                     pstmt.setString(12, fMobile.getText().trim()); pstmt.setString(13, fEmail.getText().trim());
                     pstmt.setString(14, fRoom.getText().trim()); pstmt.setString(15, getComboValue(fBlock));
                     pstmt.setString(16, fBoarderNo.getText().trim()); pstmt.setString(17, fBoarderType.getText().trim());
+                    pstmt.setBytes(18, currentPhotoBytes); // Insert BLOB image
                     pstmt.executeUpdate();
                 }
 
@@ -209,14 +291,17 @@ public class ManageStudentsController {
                     String boarderNo = resolveValue(fBoarderNo.getText(), rs.getString("boarderNo"));
                     String boarderType = resolveValue(fBoarderType.getText(), rs.getString("boarderType"));
 
-                    String updateQuery = "UPDATE Students SET fullName=?, fatherName=?, motherName=?, homeDistrict=?, address=?, department=?, degreeLevel=?, religion=?, gender=?, phoneNo=?, mobileNo=?, emailAddress=?, assignedRoomNumber=?, block=?, boarderNo=?, boarderType=? WHERE studentId=?";
+                    // Keep existing photo if a new one wasn't selected during update
+                    byte[] photoToSave = currentPhotoBytes != null ? currentPhotoBytes : rs.getBytes("photo");
+
+                    String updateQuery = "UPDATE Students SET fullName=?, fatherName=?, motherName=?, homeDistrict=?, address=?, department=?, degreeLevel=?, religion=?, gender=?, phoneNo=?, mobileNo=?, emailAddress=?, assignedRoomNumber=?, block=?, boarderNo=?, boarderType=?, photo=? WHERE studentId=?";
                     try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
                         updateStmt.setString(1, name); updateStmt.setString(2, father); updateStmt.setString(3, mother);
                         updateStmt.setString(4, district); updateStmt.setString(5, address); updateStmt.setString(6, dept);
                         updateStmt.setString(7, degree); updateStmt.setString(8, religion); updateStmt.setString(9, gender);
                         updateStmt.setString(10, phone); updateStmt.setString(11, mobile); updateStmt.setString(12, email);
                         updateStmt.setString(13, room); updateStmt.setString(14, block); updateStmt.setString(15, boarderNo);
-                        updateStmt.setString(16, boarderType); updateStmt.setString(17, id);
+                        updateStmt.setString(16, boarderType); updateStmt.setBytes(17, photoToSave); updateStmt.setString(18, id);
                         updateStmt.executeUpdate();
                     }
                 }

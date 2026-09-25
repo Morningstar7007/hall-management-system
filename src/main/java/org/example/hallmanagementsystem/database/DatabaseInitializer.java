@@ -38,6 +38,7 @@ public class DatabaseInitializer {
                 + "block TEXT,"
                 + "boarderNo TEXT,"
                 + "boarderType TEXT,"
+                + "photo BLOB," // NEW COLUMN
                 + "FOREIGN KEY (studentId) REFERENCES Users(username),"
                 + "FOREIGN KEY (assignedRoomNumber) REFERENCES Rooms(roomNumber)"
                 + ");";
@@ -79,8 +80,9 @@ public class DatabaseInitializer {
         String insertStudentUser = "INSERT OR IGNORE INTO Users (username, password, role) VALUES ('2307099', '123456', 'STUDENT')";
         String insertRoom = "INSERT OR IGNORE INTO Rooms (roomNumber, capacity, currentOccupancy, hasAirConditioning) VALUES ('B-1462', 2, 1, false)";
 
-        String insertStudentProfile = "INSERT OR IGNORE INTO Students (studentId, fullName, fatherName, motherName, homeDistrict, address, department, degreeLevel, religion, gender, phoneNo, mobileNo, emailAddress, assignedRoomNumber, block, boarderNo, boarderType) "
-                + "VALUES ('2307099', 'MONOJIT PAUL TANMAY', 'John Doe', 'Jane Doe', 'Dhaka', '123 Main St', 'CSE', 'Undergraduate', 'Hinduism', 'Male', 'N/A', '01550086298', 'monojitpaul704@gmail.com', 'B-1462', 'B', '101', 'Resident')";
+        // Notice the NULL at the end for the missing photo on the seed data
+        String insertStudentProfile = "INSERT OR IGNORE INTO Students (studentId, fullName, fatherName, motherName, homeDistrict, address, department, degreeLevel, religion, gender, phoneNo, mobileNo, emailAddress, assignedRoomNumber, block, boarderNo, boarderType, photo) "
+                + "VALUES ('2307099', 'MONOJIT PAUL TANMAY', 'John Doe', 'Jane Doe', 'Dhaka', '123 Main St', 'CSE', 'Undergraduate', 'Hinduism', 'Male', 'N/A', '01550086298', 'monojitpaul704@gmail.com', 'B-1462', 'B', '101', 'Resident', NULL)";
 
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(insertAdminUser);
