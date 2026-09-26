@@ -1,69 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="15.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.MealController">
-    <padding>
-        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
-    </padding>
+<!-- ScrollPane prevents the UI from cutting off when the window is small -->
+<ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background: #E1F5FE; -fx-background-color: #E1F5FE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.MealController">
 
-    <VBox alignment="CENTER" spacing="10.0">
-        <Label text="Boarder Meal Management" textFill="#039BE5">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-        <Label text="You can off/on your meal from or later date of today" textFill="#1976D2" />
-    </VBox>
+    <!-- StackPane keeps everything perfectly centered when Maximized -->
+    <StackPane style="-fx-background-color: #E1F5FE;">
 
-    <VBox spacing="20.0" style="-fx-border-color: #039BE5; -fx-border-width: 1; -fx-padding: 20;">
+        <VBox alignment="CENTER" maxWidth="750.0" spacing="20.0">
+            <padding><Insets bottom="40.0" left="20.0" right="20.0" top="30.0" /></padding>
 
-        <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label text="Student Roll:" />
-            <TextField editable="false" prefWidth="120.0" text="2307099" />
-            <Button text="Show" />
-        </HBox>
-
-        <Label text="Student Name: MONOJIT PAUL TANMAY, Department: CSE" textFill="#424242">
-            <font>
-                <Font name="System Bold Italic" size="12.0" />
-            </font>
-        </Label>
-
-        <HBox alignment="CENTER_LEFT" spacing="15.0">
-            <Label text="From:" />
-            <DatePicker fx:id="fromDatePicker" prefWidth="130.0" />
-
-            <Label text="to:" />
-            <DatePicker fx:id="toDatePicker" prefWidth="130.0" />
-
-            <RadioButton selected="true" text="ON">
-                <toggleGroup>
-                    <ToggleGroup fx:id="mealStatusGroup" />
-                </toggleGroup>
-            </RadioButton>
-            <RadioButton text="OFF" toggleGroup="$mealStatusGroup" />
-
-            <Button onAction="#onUpdateClick" text="Update" />
-        </HBox>
-
-        <HBox spacing="15.0" style="-fx-padding: 10 0 0 0;">
-            <!-- Status Legend mimicking the calendar labels -->
-            <VBox spacing="5.0">
-                <Label style="-fx-background-color: #388E3C; -fx-text-fill: white; -fx-padding: 2 10;" text="Meal On" />
-                <Label style="-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-padding: 2 10;" text="Meal Off" />
-                <Label style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-padding: 2 10;" text="Meal Close" />
+            <VBox alignment="CENTER" spacing="5.0">
+                <Label text="Boarder Meal Management" textFill="#0288D1">
+                    <font><Font name="System Bold" size="22.0" /></font>
+                </Label>
+                <Label fx:id="noticeLabel" text="You can off/on your meal from or later date of..." textFill="#1565C0">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
             </VBox>
-        </HBox>
 
-    </VBox>
-</VBox>
+            <VBox spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #039BE5; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 30; -fx-background-radius: 5;">
+
+                <!-- Student Info Header -->
+                <HBox alignment="CENTER" spacing="10.0">
+                    <Label text="Student Roll:" />
+                    <TextField fx:id="rollField" editable="false" prefWidth="120.0" style="-fx-background-color: #F5F5F5;" />
+                </HBox>
+                <HBox alignment="CENTER">
+                    <Label fx:id="studentInfoLabel" text="Student Name: , Department: " textFill="#424242">
+                        <font><Font name="System Bold Italic" size="14.0" /></font>
+                    </Label>
+                </HBox>
+
+                <!-- Meal Update Form (minWidth="-Infinity" stops elements from turning into "...") -->
+                <HBox alignment="CENTER" spacing="15.0" style="-fx-border-color: #E0E0E0; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 0 0;">
+                    <Label text="From:" minWidth="-Infinity"/>
+                    <DatePicker fx:id="fromDatePicker" prefWidth="130.0" minWidth="-Infinity"/>
+
+                    <Label text="to:" minWidth="-Infinity"/>
+                    <DatePicker fx:id="toDatePicker" prefWidth="130.0" minWidth="-Infinity"/>
+
+                    <fx:define>
+                        <ToggleGroup fx:id="mealStatusGroup" />
+                    </fx:define>
+                    <RadioButton text="ON" toggleGroup="$mealStatusGroup" selected="true" minWidth="-Infinity"/>
+                    <RadioButton text="OFF" toggleGroup="$mealStatusGroup" minWidth="-Infinity"/>
+
+                    <Button onAction="#onUpdateClick" style="-fx-background-color: #039BE5; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Update" minWidth="-Infinity"/>
+                </HBox>
+
+                <Label fx:id="statusMessageLabel" alignment="CENTER" maxWidth="Infinity" textFill="#D32F2F">
+                    <font><Font name="System Bold" size="13.0"/></font>
+                </Label>
+
+                <!-- Interactive Calendar Container -->
+                <VBox alignment="CENTER" spacing="0" maxWidth="500.0" style="-fx-border-color: #424242; -fx-border-width: 1; -fx-background-color: #FFFFFF;">
+                    <VBox.margin>
+                        <Insets left="50.0" right="50.0" />
+                    </VBox.margin>
+
+                    <BorderPane style="-fx-background-color: #311B92; -fx-padding: 10;">
+                        <left>
+                            <Button text="&lt; Prev" onAction="#onPrevMonthClick" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                        </left>
+                        <center>
+                            <Label fx:id="monthYearLabel" text="September 2026" textFill="WHITE" BorderPane.alignment="CENTER">
+                                <font><Font name="System Bold" size="16.0" /></font>
+                            </Label>
+                        </center>
+                        <right>
+                            <Button text="Next &gt;" onAction="#onNextMonthClick" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                        </right>
+                    </BorderPane>
+
+                    <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="1" vgap="1" style="-fx-background-color: #E0E0E0; -fx-padding: 1;">
+                        <!-- Columns generated dynamically -->
+                    </GridPane>
+                </VBox>
+
+                <!-- Restored & Centered Legend -->
+                <HBox alignment="CENTER" spacing="20.0">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                    <Label text="Meal On (Default)" style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 5 15 5 15; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 3;" />
+                    <Label text="Meal Off" style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-padding: 5 15 5 15; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 3;" />
+                </HBox>
+
+            </VBox>
+        </VBox>
+    </StackPane>
+</ScrollPane>

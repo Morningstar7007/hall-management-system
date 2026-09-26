@@ -33,11 +33,18 @@ public class AdminController {
 
     @FXML
     protected void onLogoutClick() {
+        // 1. Clear the active admin session for security
+        UserSession.loggedInUsername = null;
+
+        // 2. Route back to the Login Gateway seamlessly
         try {
-            Stage stage = (Stage) contentArea.getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-            stage.setScene(scene);
+
+            // IMPORTANT: Replace 'contentArea' below with the name of ANY @FXML Node
+            // that is already defined at the top of your AdminController
+            // (such as your main layout pane, border pane, or a button).
+            contentArea.getScene().setRoot(fxmlLoader.load());
+
         } catch (IOException e) {
             e.printStackTrace();
         }

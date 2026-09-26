@@ -55,12 +55,13 @@ public class HelloController {
         // 1. Clear the active user session for security
         UserSession.loggedInUsername = null;
 
-        // 2. Route the user back to the Login Gateway
+        // 2. Route the user back to the Login Gateway seamlessly
         try {
-            Stage stage = (Stage) contentArea.getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-            stage.setScene(scene);
+
+            // Swap the root content to maintain full-screen state
+            contentArea.getScene().setRoot(fxmlLoader.load());
+
         } catch (IOException e) {
             e.printStackTrace();
         }

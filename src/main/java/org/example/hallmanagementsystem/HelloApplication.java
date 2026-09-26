@@ -11,9 +11,15 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 900, 600);
+        // Remove hardcoded width/height so it scales naturally
+        Scene scene = new Scene(fxmlLoader.load());
+
         stage.setTitle("Hall Management System");
         stage.setScene(scene);
+
+        // Force the window to launch Maximized
+        stage.setMaximized(true);
+
         stage.show();
     }
 

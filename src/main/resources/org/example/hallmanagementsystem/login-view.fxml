@@ -25,7 +25,7 @@
 
         <VBox spacing="5.0">
             <Label text="Login Id :" />
-            <TextField fx:id="loginIdField" />
+            <TextField fx:id="usernameField" />
         </VBox>
 
         <VBox spacing="5.0">
@@ -35,6 +35,6 @@
 
         <Label fx:id="errorLabel" textFill="#d32f2f" />
 
-        <Button onAction="#onLoginClick" prefWidth="80.0" text="Login" />
+        <Button fx:id="loginButton" onAction="#onLoginClick" prefWidth="80.0" text="Login" />
     </VBox>
 </VBox>

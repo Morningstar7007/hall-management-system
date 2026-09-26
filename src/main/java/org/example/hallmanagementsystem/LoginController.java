@@ -1,12 +1,12 @@
 package org.example.hallmanagementsystem;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.example.hallmanagementsystem.database.DatabaseConnection;
 
 import java.io.IOException;
@@ -17,64 +17,61 @@ import java.sql.SQLException;
 
 public class LoginController {
 
-    @FXML private TextField loginIdField;
+    @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
+    @FXML private Button loginButton;
 
     @FXML
     protected void onLoginClick() {
-        String username = loginIdField.getText();
-        String pass = passwordField.getText();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
 
-        if (username.isEmpty() || pass.isEmpty()) {
-            errorLabel.setText("Please enter your credentials.");
+        if (username.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Please enter both username and password.");
             return;
         }
 
-        // Query the Users table for password and role
-        String query = "SELECT password, role FROM Users WHERE username = ?";
+        // Authenticate against the SQLite database on a background thread
+        new Thread(() -> {
+            String query = "SELECT role FROM Users WHERE username = ? AND password = ?";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, username);
+                pstmt.setString(2, password);
+                ResultSet rs = pstmt.executeQuery();
 
-            pstmt.setString(1, username);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                String dbPassword = rs.getString("password");
-                String role = rs.getString("role");
-
-                if (pass.equals(dbPassword)) {
-                    // Save the user's ID to the global session
+                if (rs.next()) {
+                    // Valid credentials - fetch the role
+                    String role = rs.getString("role");
                     UserSession.loggedInUsername = username;
 
-                    // Smart Routing: Load different dashboards based on role
-                    if (role.equals("ADMIN")) {
-                        loadDashboard("admin-view.fxml");
-                    } else if (role.equals("STUDENT")) {
-                        loadDashboard("hello-view.fxml");
+                    // Route the user based on their specific role
+                    if ("ADMIN".equalsIgnoreCase(role)) {
+                        Platform.runLater(() -> loadDashboard("admin-view.fxml")); // Update this if your admin FXML name is different
+                    } else {
+                        Platform.runLater(() -> loadDashboard("hello-view.fxml"));
                     }
                 } else {
-                    errorLabel.setText("Invalid Password.");
+                    Platform.runLater(() -> errorLabel.setText("Invalid username or password."));
                 }
-            } else {
-                errorLabel.setText("User not found.");
+            } catch (SQLException e) {
+                Platform.runLater(() -> errorLabel.setText("Database error: " + e.getMessage()));
             }
-
-        } catch (SQLException e) {
-            errorLabel.setText("Database error occurred.");
-            e.printStackTrace();
-        }
+        }).start();
     }
 
-    private void loadDashboard(String fxmlFile) {
+    private void loadDashboard(String fxmlFileName) {
         try {
-            Stage stage = (Stage) loginIdField.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
-            Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-            stage.setScene(scene);
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFileName));
+
+            // Swap the root content to maintain full-screen state seamlessly
+            loginButton.getScene().setRoot(fxmlLoader.load());
+
         } catch (IOException e) {
             e.printStackTrace();
+            errorLabel.setText("Error loading dashboard layout: " + fxmlFileName);
         }
     }
 }
