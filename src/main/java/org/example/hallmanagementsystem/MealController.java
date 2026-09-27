@@ -32,8 +32,8 @@ public class MealController {
     @FXML
     public void initialize() {
         currentYearMonth = YearMonth.now();
-        LocalDate allowedDate = LocalDate.now().plusDays(2);
-        noticeLabel.setText("You can off/on your meal from or later date of " + allowedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        LocalDate allowedDate = LocalDate.now();
+        noticeLabel.setText("Notice: You can only update your meal status for " + allowedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " or later dates.");
 
         if (UserSession.loggedInUsername != null) {
             rollField.setText(UserSession.loggedInUsername);
@@ -43,7 +43,7 @@ public class MealController {
     }
 
     private void fetchStudentInfo(String studentId) {
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             String query = "SELECT fullName, department FROM Students WHERE studentId = ?";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -55,7 +55,7 @@ public class MealController {
                     Platform.runLater(() -> studentInfoLabel.setText("Student Name: " + name + ", Department: " + dept));
                 }
             } catch (SQLException e) { e.printStackTrace(); }
-        }).start();
+        });
     }
 
     @FXML
@@ -73,25 +73,40 @@ public class MealController {
     private void refreshCalendar() {
         monthYearLabel.setText(currentYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
 
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             List<MealRecord> records = fetchMealRecords(UserSession.loggedInUsername);
             Platform.runLater(() -> drawCalendarGrid(records));
-        }).start();
+        });
     }
 
     private List<MealRecord> fetchMealRecords(String studentId) {
         List<MealRecord> records = new ArrayList<>();
-        String query = "SELECT fromDate, toDate, status FROM MealRecords WHERE studentId = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, studentId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                records.add(new MealRecord(
-                        LocalDate.parse(rs.getString("fromDate")),
-                        LocalDate.parse(rs.getString("toDate")),
-                        rs.getString("status")
-                ));
+        
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String query = "SELECT fromDate, toDate, status FROM MealRecords WHERE studentId = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, studentId);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    records.add(new MealRecord(
+                            LocalDate.parse(rs.getString("fromDate")),
+                            LocalDate.parse(rs.getString("toDate")),
+                            rs.getString("status")
+                    ));
+                }
+            }
+
+            // Append global overrides at the end so they take precedence
+            String globalQuery = "SELECT fromDate, toDate, status FROM GlobalMealOverrides";
+            try (PreparedStatement pstmt = conn.prepareStatement(globalQuery)) {
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    records.add(new MealRecord(
+                            LocalDate.parse(rs.getString("fromDate")),
+                            LocalDate.parse(rs.getString("toDate")),
+                            rs.getString("status")
+                    ));
+                }
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return records;
@@ -204,33 +219,54 @@ public class MealController {
             return;
         }
 
+        // Prevent updating past dates
+        LocalDate today = LocalDate.now();
+        if (fromDate.isBefore(today)) {
+            statusMessageLabel.setText("Error: You cannot change meal status for past dates.");
+            return;
+        }
+
         RadioButton selectedRadio = (RadioButton) mealStatusGroup.getSelectedToggle();
         String status = selectedRadio.getText();
         String studentId = UserSession.loggedInUsername;
 
-        new Thread(() -> {
-            String query = "INSERT INTO MealRecords (studentId, fromDate, toDate, status) VALUES (?, ?, ?, ?)";
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(query)) {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                // First, check if the selected dates overlap with any global override
+                String overlapQuery = "SELECT 1 FROM GlobalMealOverrides WHERE fromDate <= ? AND toDate >= ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(overlapQuery)) {
+                    checkStmt.setString(1, toDate.toString());
+                    checkStmt.setString(2, fromDate.toString());
+                    ResultSet rs = checkStmt.executeQuery();
+                    if (rs.next()) {
+                        Platform.runLater(() -> {
+                            statusMessageLabel.setStyle("-fx-text-fill: #D32F2F;");
+                            statusMessageLabel.setText("Error: Cannot change status during a mandatory Hall Override.");
+                        });
+                        return; // Prevent update
+                    }
+                }
 
-                pstmt.setString(1, studentId);
-                pstmt.setString(2, fromDate.toString());
-                pstmt.setString(3, toDate.toString());
-                pstmt.setString(4, status);
-                pstmt.executeUpdate();
+                String query = "INSERT INTO MealRecords (studentId, fromDate, toDate, status) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setString(1, studentId);
+                    pstmt.setString(2, fromDate.toString());
+                    pstmt.setString(3, toDate.toString());
+                    pstmt.setString(4, status);
+                    pstmt.executeUpdate();
 
-                Platform.runLater(() -> {
-                    statusMessageLabel.setStyle("-fx-text-fill: #2E7D32;"); // Success text is green
-                    statusMessageLabel.setText("Successfully updated meal status to " + status + ".");
-                    refreshCalendar();
-                });
-
+                    Platform.runLater(() -> {
+                        statusMessageLabel.setStyle("-fx-text-fill: #2E7D32;"); // Success text is green
+                        statusMessageLabel.setText("Successfully updated meal status to " + status + ".");
+                        refreshCalendar();
+                    });
+                }
             } catch (SQLException e) {
                 Platform.runLater(() -> {
                     statusMessageLabel.setStyle("-fx-text-fill: #D32F2F;"); // Error text is red
                     statusMessageLabel.setText("Database Error: Could not save meal status.");
                 });
             }
-        }).start();
+        });
     }
 }

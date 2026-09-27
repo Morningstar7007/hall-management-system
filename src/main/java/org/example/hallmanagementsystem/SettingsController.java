@@ -38,10 +38,10 @@ public class SettingsController {
             return;
         }
 
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             // First, verify the old password
-            String checkQuery = "SELECT password FROM Students WHERE studentId = ?";
-            String updateQuery = "UPDATE Students SET password = ? WHERE studentId = ?";
+            String checkQuery = "SELECT password FROM Users WHERE username = ?";
+            String updateQuery = "UPDATE Users SET password = ? WHERE username = ?";
 
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
@@ -71,7 +71,7 @@ public class SettingsController {
                 Platform.runLater(() -> showAlert("Error", "Database error occurred.", Alert.AlertType.ERROR));
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     private void showAlert(String title, String message, Alert.AlertType type) {

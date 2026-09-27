@@ -1,32 +1,54 @@
 package org.example.hallmanagementsystem;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import org.example.hallmanagementsystem.core.BaseDashboardController;
 
-import java.io.IOException;
+public class HelloController extends BaseDashboardController {
 
-public class HelloController {
-
+    @FXML private javafx.scene.layout.BorderPane rootPane;
+    @FXML private javafx.scene.layout.VBox sidebarVBox;
+    @FXML private Label welcomeLabel;
     @FXML private StackPane contentArea;
     @FXML private Label statusLabel;
+    @FXML private Label networkTimeLabel;
 
-    /**
-     * Helper method to load different screens into the center of the dashboard
-     */
-    private void loadView(String fxmlFileName) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFileName));
-            javafx.scene.Node view = fxmlLoader.load();
-            contentArea.getChildren().setAll(view);
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (statusLabel != null) {
-                statusLabel.setText("Error loading view: " + fxmlFileName);
+    @Override
+    protected StackPane getContentArea() {
+        return contentArea;
+    }
+
+    @Override
+    protected Label getStatusLabel() {
+        return statusLabel;
+    }
+
+    @FXML
+    public void initialize() {
+        // Platform.runLater ensures that the UI elements are fully loaded and attached to the layout before binding
+        javafx.application.Platform.runLater(() -> {
+            // Bind sidebar width to exactly 20% of the root pane's (window) width dynamically
+            if (rootPane != null && sidebarVBox != null) {
+                sidebarVBox.prefWidthProperty().bind(rootPane.widthProperty().multiply(0.20));
             }
+
+            // Bind welcome label font size to scale dynamically with window width
+            if (welcomeLabel != null && rootPane != null) {
+                welcomeLabel.styleProperty().bind(
+                        javafx.beans.binding.Bindings.concat("-fx-font-size: ", rootPane.widthProperty().divide(35).asString(), "px;")
+                );
+            }
+        });
+
+        // Fetch Secure Network Time (JSON Parsing)
+        if (networkTimeLabel != null) {
+            org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
+                String secureTime = org.example.hallmanagementsystem.core.NetworkTimeService.fetchDhakaTime();
+                javafx.application.Platform.runLater(() -> {
+                    networkTimeLabel.setText(secureTime);
+                });
+            });
         }
     }
 
@@ -52,18 +74,6 @@ public class HelloController {
 
     @FXML
     protected void onLogoutClick() {
-        // 1. Clear the active user session for security
-        UserSession.loggedInUsername = null;
-
-        // 2. Route the user back to the Login Gateway seamlessly
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-
-            // Swap the root content to maintain full-screen state
-            contentArea.getScene().setRoot(fxmlLoader.load());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        handleLogout();
     }
 }

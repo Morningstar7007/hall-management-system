@@ -52,7 +52,7 @@ public class PaymentController {
     }
 
     private void loadPaymentData(String studentId) {
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             ObservableList<PaymentRecord> records = FXCollections.observableArrayList();
             String query = "SELECT * FROM Payments WHERE studentId = ?";
 
@@ -85,6 +85,6 @@ public class PaymentController {
             } catch (SQLException e) {
                 System.out.println("Error loading payments: " + e.getMessage());
             }
-        }).start();
+        });
     }
 }

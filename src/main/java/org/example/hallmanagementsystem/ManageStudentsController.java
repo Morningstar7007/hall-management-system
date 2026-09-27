@@ -147,7 +147,7 @@ public class ManageStudentsController {
     }
 
     private void loadStudentData() {
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             ObservableList<StudentProfile> students = FXCollections.observableArrayList();
             String query = "SELECT * FROM Students";
             try (Connection conn = DatabaseConnection.getConnection();
@@ -166,7 +166,7 @@ public class ManageStudentsController {
                 }
                 Platform.runLater(() -> studentsTable.setItems(students));
             } catch (SQLException e) { e.printStackTrace(); }
-        }).start();
+        });
     }
 
     private void populateForm(StudentProfile profile) {
@@ -233,7 +233,7 @@ public class ManageStudentsController {
 
         String id = fId.getText().trim();
 
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 conn.setAutoCommit(false);
 
@@ -263,7 +263,7 @@ public class ManageStudentsController {
             } catch (SQLException e) {
                 Platform.runLater(() -> formStatusLabel.setText("Error adding student: " + e.getMessage()));
             }
-        }).start();
+        });
     }
 
     @FXML
@@ -271,7 +271,7 @@ public class ManageStudentsController {
         String id = fId.getText().trim();
         if (id.isEmpty()) { formStatusLabel.setText("Error: Student ID is required to update a record."); return; }
 
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 String selectQuery = "SELECT * FROM Students WHERE studentId = ?";
                 ResultSet rs;
@@ -318,14 +318,14 @@ public class ManageStudentsController {
             } catch (SQLException e) {
                 Platform.runLater(() -> formStatusLabel.setText("Error updating record."));
             }
-        }).start();
+        });
     }
 
     @FXML
     protected void onDeleteClick() {
         String id = fId.getText().trim();
         if (id.isEmpty()) { formStatusLabel.setText("Error: Student ID is required to delete."); return; }
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 conn.setAutoCommit(false);
                 try (PreparedStatement p1 = conn.prepareStatement("DELETE FROM Students WHERE studentId = ?");
@@ -336,7 +336,7 @@ public class ManageStudentsController {
                 conn.commit();
                 Platform.runLater(() -> { formStatusLabel.setText("Student Deleted!"); clearForm(); loadStudentData(); });
             } catch (SQLException e) { Platform.runLater(() -> formStatusLabel.setText("Error deleting student.")); }
-        }).start();
+        });
     }
 
     private String resolveValue(String input, String dbValue) {

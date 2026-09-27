@@ -10,17 +10,23 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        org.example.hallmanagementsystem.database.DatabaseInitializer.createTables();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
         // Remove hardcoded width/height so it scales naturally
         Scene scene = new Scene(fxmlLoader.load());
 
-        stage.setTitle("Hall Management System");
+        stage.setTitle("HallSync");
         stage.setScene(scene);
 
         // Force the window to launch Maximized
         stage.setMaximized(true);
 
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.shutdown();
     }
 
     public static void main(String[] args) {

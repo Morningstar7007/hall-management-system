@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.HelloController">
+<BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hallmanagementsystem.HelloController">
 
     <!-- TOP HEADER -->
     <top>
@@ -16,7 +16,7 @@
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
-            <Label text="Hall Management System - STUDENT PORTAL" textFill="WHITE">
+            <Label text="HallSync - STUDENT PORTAL" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="20.0" />
                 </font>
@@ -26,7 +26,7 @@
 
     <!-- LEFT SIDEBAR -->
     <left>
-        <VBox prefWidth="230.0" spacing="10.0" style="-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
+        <VBox fx:id="sidebarVBox" prefWidth="230.0" spacing="10.0" style="-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
             </padding>
@@ -56,7 +56,7 @@
     <center>
         <StackPane fx:id="contentArea" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
             <VBox alignment="CENTER" spacing="20.0">
-                <Label text="Welcome to the Student Dashboard" textFill="#424242">
+                <Label fx:id="welcomeLabel" text="Welcome to the Student Dashboard" textFill="#424242">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
@@ -66,6 +66,18 @@
                         <Font size="14.0" />
                     </font>
                 </Label>
+                <HBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #E1F5FE; -fx-padding: 10px; -fx-background-radius: 5px;">
+                    <Label text="🔒 Secure Server Time (Dhaka):" textFill="#0277BD">
+                        <font>
+                            <Font name="System Bold" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="networkTimeLabel" text="Loading..." textFill="#0277BD">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Label>
+                </HBox>
             </VBox>
         </StackPane>
     </center>

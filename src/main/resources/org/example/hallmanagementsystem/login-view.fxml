@@ -14,7 +14,7 @@
             <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
         </padding>
 
-        <Label text="Lalanshah Hall Login">
+        <Label text="HallSync Login">
             <font>
                 <Font name="System Bold" size="16.0" />
             </font>

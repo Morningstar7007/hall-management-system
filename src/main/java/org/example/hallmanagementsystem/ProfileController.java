@@ -24,7 +24,7 @@ public class ProfileController {
     }
 
     private void fetchStudentData(String studentId) {
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             String query = "SELECT * FROM Students WHERE studentId = ?";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -60,6 +60,6 @@ public class ProfileController {
                     });
                 }
             } catch (SQLException e) { e.printStackTrace(); }
-        }).start();
+        });
     }
 }

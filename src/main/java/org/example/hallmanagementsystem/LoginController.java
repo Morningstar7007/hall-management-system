@@ -33,7 +33,7 @@ public class LoginController {
         }
 
         // Authenticate against the SQLite database on a background thread
-        new Thread(() -> {
+        org.example.hallmanagementsystem.core.ConcurrencyManager.execute(() -> {
             String query = "SELECT role FROM Users WHERE username = ? AND password = ?";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -59,7 +59,7 @@ public class LoginController {
             } catch (SQLException e) {
                 Platform.runLater(() -> errorLabel.setText("Database error: " + e.getMessage()));
             }
-        }).start();
+        });
     }
 
     private void loadDashboard(String fxmlFileName) {

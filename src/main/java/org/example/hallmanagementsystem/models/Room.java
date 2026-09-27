@@ -4,14 +4,12 @@ public class Room {
     private String roomNumber;
     private int capacity;
     private int currentOccupancy;
-    private boolean hasAirConditioning;
 
     // Constructor
-    public Room(String roomNumber, int capacity, int currentOccupancy, boolean hasAirConditioning) {
+    public Room(String roomNumber, int capacity, int currentOccupancy) {
         this.roomNumber = roomNumber;
         this.capacity = capacity;
         this.currentOccupancy = currentOccupancy;
-        this.hasAirConditioning = hasAirConditioning;
     }
 
     // Getters and Setters
@@ -37,13 +35,5 @@ public class Room {
 
     public void setCurrentOccupancy(int currentOccupancy) {
         this.currentOccupancy = currentOccupancy;
-    }
-
-    public boolean isHasAirConditioning() {
-        return hasAirConditioning;
-    }
-
-    public void setHasAirConditioning(boolean hasAirConditioning) {
-        this.hasAirConditioning = hasAirConditioning;
     }
 }
